@@ -1,73 +1,100 @@
 package clases;
 
+import java.text.ParseException;
+import java.util.Date;
 import java.util.Scanner;
 
 public class Interfaz {
-    private static Scanner scanner = new Scanner(System.in);
-    private static Login login = new Login();
+	public static void main(String[] args) {
+		ClientInfo info_clientes= new ClientInfo();
+		ServiceInfo info_servicios=new ServiceInfo();
+		Interfaz interfaz = new Interfaz();
+		Login users = new Login();
+		Scanner input = new Scanner(System.in);
 
-    public static void main(String[] args) {
-        System.out.println("Bienvenido al sistema de reservaciones");
+		System.out.println("¡Bienvenido a nuestro sistema de reservas y servicios!");
+		System.out.println("Por favor, ingrese su usuario y contraseña para continuar.");
 
-        // Pedir login y contraseña
-        System.out.print("Ingrese su login: ");
-        String loginInput = scanner.nextLine();
-        System.out.print("Ingrese su contraseña: ");
-        String passwordInput = scanner.nextLine();
+		System.out.println("Usuario: ");
+		String usuario = input.next();
 
-        // Verificar si el usuario está registrado
-        if (!login.verifyUser(loginInput, passwordInput)) {
-            System.out.println("Lo siento, no estás registrado en el sistema");
-            return;
-        }
+		System.out.println("Contraseña: ");
+		String contrasena = input.next();
 
-        // Si el usuario está registrado, preguntar si es invitado o empleado
-        System.out.println("¿Eres un invitado o un empleado?");
-        System.out.println("1. Invitado");
-        System.out.println("2. Empleado");
-        System.out.print("Ingrese su opción: ");
-        int option = scanner.nextInt();
-        scanner.nextLine(); // Consumir el salto de línea
+		if (users.verifyUser(usuario, contrasena)) {
+			System.out.println("¡Login exitoso!");
 
-        if (option == 1) {
-            // Crear una nueva reserva
-            System.out.println("Nueva reserva");
-            System.out.print("Ingrese la fecha de inicio (dd/mm/yyyy): ");
-            String startDate = scanner.nextLine();
-            System.out.print("Ingrese la fecha de fin (dd/mm/yyyy): ");
-            String endDate = scanner.nextLine();
-            System.out.print("Ingrese el nombre del residente: ");
-            String residentName = scanner.nextLine();
-            System.out.print("Ingrese el correo electrónico del residente: ");
-            String residentEmail = scanner.nextLine();
-            System.out.print("Ingrese el tipo de identificación del residente: ");
-            String residentIdType = scanner.nextLine();
-            System.out.print("Ingrese el número de identificación del residente: ");
-            int residentIdNumber = scanner.nextInt();
-            scanner.nextLine(); // Consumir el salto de línea
+			String userType = users.getUserType(usuario);
 
-            // TODO: Crear la reserva con los datos ingresados
-            System.out.println("Reserva creada exitosamente");
-            
-            
-        } else if (option == 2) {
-            // Preguntar si es administrador o no
-            System.out.println("¿Eres administrador?");
-            System.out.println("1. Sí");
-            System.out.println("2. No");
-            System.out.print("Ingrese su opción: ");
-            int adminOption = scanner.nextInt();
-            scanner.nextLine(); // Consumir el salto de línea
+			switch (userType) {
+			case "admin":
+				// Mostrar menu de opciones de Admin
+				break;
+			case "empleado":
+				// Mostrar menu de opciones de Empleado
+				break;
+			case "invitado":
+				// Mostrar menu de opciones de Invitado
+				System.out.println("¿Qué acción desea realizar?");
+				System.out.println("1. Nueva reserva");
+				System.out.println("2. Adquirir servicio");
 
-            if (adminOption == 1) {
-                // TODO: Menú para administradores
-                System.out.println("Menú para administradores");
-            } else {
-                // TODO: Menú para empleados normales
-                System.out.println("Menú para empleados no administradores");
-            }
-        } else {
-            System.out.println("Opción inválida");
-        }
-    }
+				int accion = input.nextInt();
+
+				switch (accion) {
+				case 1:
+					System.out.println("Por favor ingrese los datos de la reserva");
+					System.out.println("Fecha de inicio (en formato dd/MM/yyyy): ");
+					String fechaInicioString = input.next();
+					System.out.println("Fecha de fin (en formato dd/MM/yyyy): ");
+					String fechaFinString = input.next();
+					System.out.println("Nombre del residente: ");
+					String nombreResidente = input.next();
+					System.out.println("Correo del residente: ");
+					String correoResidente = input.next();
+					System.out.println("Tipo de ID del residente: ");
+					String tipoIDResidente = input.next();
+					System.out.println("Número de ID del residente: ");
+					int numeroIDResidente = input.nextInt();
+					System.out.println("Tipo de habitación: ");
+					String tipoHabitacion = input.next();
+
+					// Convertir fechas de string a Date
+					Date fechaInicio = new Date();
+					Date fechaFin = new Date();
+					try {
+						fechaInicio = new java.text.SimpleDateFormat("dd/MM/yyyy").parse(fechaInicioString);
+						fechaFin = new java.text.SimpleDateFormat("dd/MM/yyyy").parse(fechaFinString);
+					} catch (ParseException e) {
+						e.printStackTrace();
+					}
+
+				
+					Reserve nuevaReserva = new Reserve(fechaInicio, fechaFin, nombreResidente, correoResidente,
+							tipoIDResidente, numeroIDResidente, tipoHabitacion);
+					
+					info_clientes.addClient(tipoHabitacion, usuario, userType, contrasena);
+
+					System.out.println("Reserva creada exitosamente:");
+					System.out.println(nuevaReserva);
+					break;
+
+				case 2:
+					System.out.println("Por favor ingrese los datos del servicio");
+					System.out.println("Nombre del servicio: ");
+					String nombreServicio = input.next();
+					
+					//!!!!!toca buscar dentro de la lista de servicios si existe y de ser el caso agregarlo
+					
+					info_servicios.agregarServicio(usuario, servicio );
+					
+					System.out.println("Servicio creado exitosamente");
+					break;
+				default:
+					System.out.println("Opción inválida");
+					break;
+				}
+			}
+		}
+	}
 }
